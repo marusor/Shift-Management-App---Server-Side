@@ -25,6 +25,7 @@ exports.signUp = (req, res, next) => {
               password: hash,
               firstname: req.body.firstname,
               lastname: req.body.lastname,
+              permission: req.body.permission,
               comments: [],
               created: new Date().toLocaleString("en-GB"),
               updated: "",
@@ -74,6 +75,7 @@ exports.login = (req, res, next) => {
             {
               email: user[0].email,
               userId: user[0]._id,
+              role: user[0].permission,
             },
             process.env.JWT_KEY,
             {

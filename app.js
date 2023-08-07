@@ -7,8 +7,7 @@ let port = process.env.PORT || 3000;
 let shiftRoute = require("./routes/shift-route");
 let userRoute = require("./routes/user-route");
 let commentRoute = require("./routes/comment-route");
-const uri =
-  "mongodb+srv://bamarincean:tastatura1@bogdan.lqpeeyn.mongodb.net/?retryWrites=true&w=majority";
+const uri = `mongodb+srv://bamarincean:${process.env.MONGO_ATLAS_PW}@bogdan.lqpeeyn.mongodb.net/?retryWrites=true&w=majority`;
 const connect = async () => {
   try {
     await mongoose.connect(uri, {

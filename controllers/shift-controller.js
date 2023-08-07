@@ -1,12 +1,9 @@
 let Shift = require("../models/shifts");
 let mongoose = require("mongoose");
-// const permission = require("../middleware/permission");
-// let User = require("../models/user");
 
-exports.getAllShifts = (req, res, next) => {
-  let userId = req.userData.userId;
+exports.getAllShifts = (req, res) => {
   Shift.find()
-    .select("start end perHour place created updated _id")
+    .select("userId start end perHour place created updated _id")
     .exec()
     .then((docs) => {
       let response = {
@@ -14,7 +11,7 @@ exports.getAllShifts = (req, res, next) => {
         shifts: docs.map((doc) => {
           return {
             _id: doc._id,
-            userId: userId,
+            userId: doc.userId,
             start: doc.start,
             end: doc.end,
             perHour: doc.perHour,
@@ -36,12 +33,37 @@ exports.getAllShifts = (req, res, next) => {
     })
     .catch((err) => {
       res.status(500).json({
+        message: "err",
         error: err,
       });
     });
 };
 
-exports.getShiftById = (req, res, next) => {
+exports.getAllShiftsByUser = (req, res) => {
+  let userId = req.params.userId;
+
+  Shift.find({ userId: userId })
+    .select("_id userId start end perHour place created updated")
+    .exec()
+    .then((shifts) => {
+      if (!shifts) {
+        return res.status(404).json({
+          message: "Shifts not found",
+        });
+      }
+      res.status(200).json({
+        message: "Shifts by User",
+        shifts: shifts,
+      });
+    })
+    .catch((err) => {
+      res.status(500).json({
+        error: err,
+      });
+    });
+};
+
+exports.getShiftById = (req, res) => {
   let shift = req.params.lateShift;
   Shift.findById(shift)
     .select("start end perHour created updated _id")
@@ -65,7 +87,7 @@ exports.getShiftById = (req, res, next) => {
     });
 };
 
-exports.addShift = (req, res, next) => {
+exports.addShift = (req, res) => {
   let userId = req.userData.userId;
   let modelShift = new Shift({
     _id: new mongoose.Types.ObjectId(),
@@ -105,7 +127,7 @@ exports.addShift = (req, res, next) => {
     });
 };
 
-exports.updateShiftById = (req, res, next) => {
+exports.updateShiftById = (req, res) => {
   let id = req.params.lateShift;
   let update = {};
   for (let elements of req.body) {
@@ -132,7 +154,7 @@ exports.updateShiftById = (req, res, next) => {
     });
 };
 
-exports.deleteShiftById = (req, res, next) => {
+exports.deleteShiftById = (req, res) => {
   const id = req.params.lateShift;
   Shift.deleteOne({ _id: id })
     .exec()

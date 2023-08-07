@@ -11,7 +11,7 @@ let userSchema = mongoose.Schema({
   password: { type: String, required: true },
   firstname: { type: String, required: true },
   lastname: { type: String, required: true },
-  permission: { type: String },
+  permission: { type: String, enum: ["admin", "user"], default: "user" },
   comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
   created: { type: String },
   updated: { type: String },

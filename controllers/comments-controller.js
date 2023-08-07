@@ -78,6 +78,39 @@ exports.addNewComment = (req, res, next) => {
     });
 };
 
+exports.getAllCommentsByUser = (req, res, next) => {
+  const userId = req.params.userId;
+
+  User.findById(userId)
+    .populate("comments")
+    .exec()
+    .then((user) => {
+      if (!user) {
+        return res.status(404).json({
+          message: "User not found",
+        });
+      }
+      const comments = user.comments.map((comment) => {
+        return {
+          _id: comment._id,
+          userId: comment.userId,
+          description: comment.description,
+          created: comment.created,
+          updated: comment.updated,
+        };
+      });
+      res.status(200).json({
+        message: "Comments by User",
+        comments: comments,
+      });
+    })
+    .catch((err) => {
+      res.status(500).json({
+        error: err,
+      });
+    });
+};
+
 exports.getCommentById = (req, res, next) => {
   let comment = req.params.commentId;
   Comment.findById(comment)
